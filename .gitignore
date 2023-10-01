@@ -162,3 +162,4 @@ cython_debug/
 =======
 .venv/
 >>>>>>> 22d2596 (Head commit)
+.vscode/

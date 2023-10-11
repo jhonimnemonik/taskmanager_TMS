@@ -6,6 +6,8 @@ __pycache__/
 *.ipynb
 # C extensions
 *.so
+удалить.py
+gpt.py
 
 # Distribution / packaging
 .Python

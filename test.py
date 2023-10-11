@@ -12,9 +12,9 @@ def log_to_file(file_name):
             result = func(*args, **kwargs)
             with open(file_name, 'a') as file:
                 file.write(f"{dat_time}\n")
-                file.write(f"Get for: '{func.__name__}'\n")
-                file.write(f"Info: {result}\n\n")
-            return result
+                file.write(f"Get  for: '{func.__name__}'\n")
+                file.write(f"Info : {result}\n\n")
+            return result  
         return wrapper
     return my_decorator
 
@@ -32,8 +32,8 @@ def user_info_get():
 
 @log_to_file('log.txt')
 def cpu_get():
-    _times = psutil.cpu_times()
-    percent = psutil.cpu_percent(interval=0)
+    _times = psutil.cpu_times()  
+    percent = psutil.cpu_percent(interval= 0)
     return _times, percent
 
 
@@ -43,21 +43,21 @@ def memory_get():
     total = mem_info.total
     percent = mem_info.percent
     free = mem_info.available
-    return total, percent, free
+    return {total, percent, free}
 
 
 @log_to_file('log.txt')
 def boot_get():
     time_value = psutil.boot_time()
     boot_time = datetime.datetime.fromtimestamp(time_value).strftime("%Y-%m-%d %H:%M:%S")
-    since_time = "{:.0f}".format(time_value / 3600) + ' H.'
-    return boot_time, since_time
+    since_time = "{:.0f}".format(time_value / 360) + ' H.'
+    return {boot_time, since_time}
 
 
 @log_to_file('log.txt')
 def info_apps_get():
     process_info = []
-    for number, proc in enumerate(psutil.process_iter(['name', 'pid', 'status', 'username', 'cpu_percent']), start=1):
+    for number, proc in enumerate(psutil.process_iter(['name', 'pid', 'status', 'username', 'cpu_percent']), start = 1):
         info = proc.as_dict(['name', 'pid', 'status', 'username', 'cpu_percent'])
         process_info.append({
             'number': number,
@@ -71,8 +71,8 @@ def info_apps_get():
 
 
 def title_show(user_info_list, title_name):
-    button = "⊟ ⊡ ⊠ ╗"
-    print(f"╔{title_name:═^104} {button:<7}")
+    buton = "⊟ ⊡ ⊠ ╗"
+    print(f"╔{title_name:═^104}", f"{buton:<7}")
     for user_name, user_time in user_info_list:
         print("║{:>90}{:<10}{:<10}║".format("", "User name: ", user_name))
         print("║{:>90}{:<10}{:<10}║".format("", "On system: ", time.strftime("%H:%M:%S", time.gmtime(user_time))))
@@ -90,7 +90,7 @@ def cpu_show(cpu_data):
 
 
 def memory_show(mem_data):
-    total, percent, free = mem_data
+    total, free, percent = mem_data
     load = "{:░<10}".format("▓" * int(percent / 10))
     print("║\t{:<10}{:<10}{:<10}{}{:<64}║".format("Ram", "Load:", str(percent) + " % ", load, ""))
     print("║\t{:<10}{:<10}{:<10}{:<74}║".format("", "Total:", str(total // 1024 ** 2) + " Mb.", ""))
@@ -104,7 +104,7 @@ def boot_show(boot_time, since_time):
 
 
 def process_list_show(processes, num_running_apps):
-    print("║\t{:<20}{:<84}║".format("Running app-s:", num_running_apps))
+    print("║\t{:<20}{:<84}║".format("Runs applications:", num_running_apps))
     print("║{:<111}║".format(""))
     print("╠{0:─^3}┬{0:─^64}┬{0:─^22}┬{0:─^5}┬{0:─^5}┬{0:─^7}╣".format("─"))
     print("║{:^3}│{:^64}│{:^22}│{:^5}│{:^5}│{:^7}║".format("№", "Name", "User", "%", "PID", "Status"))
@@ -129,10 +129,9 @@ def main():
     title_show(user_info_get(), "Task Manager")
     cpu_show(cpu_get())
     memory_show(memory_get())
-    boot_show(*boot_get())
+    boot_show(*boot_get()) 
     num_running_apps = len([process for process in info_apps_get() if process['status'] == 'running'])
     process_list_show(info_apps_get(), num_running_apps)
-
 
 if __name__ == "__main__":
     main()
